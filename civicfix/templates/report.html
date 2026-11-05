@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% block title %}Report an issue | FixMyStreet{% endblock %}
+{% block back %}<a class="back" data-back href="{% url 'dashboard' %}">Back to dashboard</a>{% endblock %}
+{% block content %}
+<section class="card">
+  <p class="hint">CITIZEN SERVICES / NEW GRIEVANCE</p><h1>Report a civic issue</h1>
+  <p class="hint">Please provide accurate details and pin the location of the issue.</p>
+  <form method="post" enctype="multipart/form-data" class="grid2">{% csrf_token %}
+    <div>{{ form.non_field_errors }}
+      {% for field in form.visible_fields %}<p>{{ field.label_tag }}{{ field }}{{ field.errors }}{% if field.help_text %}<span class="helptext">{{ field.help_text }}</span>{% endif %}</p>{% endfor %}
+      {{ form.latitude }}{{ form.longitude }}
+      <button class="btn" type="submit">Submit complaint →</button>
+    </div>
+    <div><p><b>Pin the issue location</b><br><span class="hint">Click the map, drag the pin, or use your current location.</span></p>
+      <button type="button" class="btn ghost sm" id="locate">◎ Use my location</button>
+      <div id="map" class="map" data-mode="picker"></div>{{ form.latitude.errors }}{{ form.longitude.errors }}
+      <p class="hint">Location permission required for the current-location button.</p>
+    </div>
+  </form>
+</section>
+{% endblock %}

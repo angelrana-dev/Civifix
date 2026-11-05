@@ -1,0 +1,39 @@
+{% load static %}
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#12345a">
+  <title>{% block title %}FixMyStreet | Civic Grievance Portal{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+  <link rel="stylesheet" href="{% static 'css/app.css' %}">
+</head>
+<body>
+<div class="tricolor"></div>
+<header class="bar">
+  <a class="brand" href="{% url 'home' %}"><span class="brand-mark">✦</span><span>FixMyStreet<small>Citizen Grievance &amp; Resolution Portal</small></span></a>
+  <nav>
+    {% if user.is_authenticated %}
+      <a href="{% url 'dashboard' %}">Dashboard</a>
+      {% if user.is_staff or user.profile.role == 'citizen' %}<a href="{% url 'report' %}">Report an issue</a>{% endif %}
+      {% if user.is_staff %}<a href="{% url 'admin:index' %}">Admin</a>{% endif %}
+      <form method="post" action="{% url 'logout' %}">{% csrf_token %}<button class="link">Log out ({{ user.username }})</button></form>
+    {% else %}
+      <a href="{% url 'login' %}">Log in</a><a class="btn sm saffron" href="{% url 'register' %}">Create account</a>
+    {% endif %}
+  </nav>
+</header>
+<main>
+  {% block back %}{% endblock %}
+  {% for message in messages %}<p class="msg">{{ message }}</p>{% endfor %}
+  {% block content %}{% endblock %}
+</main>
+<footer>FixMyStreet · Civic grievance management</footer>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="{% static 'js/app.js' %}"></script>
+</body>
+</html>

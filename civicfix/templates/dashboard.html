@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load extras %}
+{% block title %}Dashboard | FixMyStreet{% endblock %}
+{% block content %}
+<div class="panel-head"><div><p class="hint">HOME / WORKSPACE</p><h1>{% if role == 'admin' %}All complaints{% elif role == 'officer' %}Department complaints{% else %}My complaints{% endif %}</h1><p class="hint">Review reports, monitor status and follow complaint progress.</p></div><span class="live" id="live">Connecting</span></div>
+<div class="stats" id="stats">
+  <div><b data-stat="total">{{ stats.total|default:"0" }}</b><span>Total complaints</span></div>
+  {% for key,label in statuses %}<div class="s-{{ key }}"><b data-stat="{{ key }}">{{ stats|get:key|default:"0" }}</b><span>{{ label }}</span></div>{% endfor %}
+</div>
+<div class="card">
+  <div class="panel-head"><h2>Complaint register</h2>{% if role == 'citizen' %}<a class="btn" href="{% url 'report' %}">＋ New complaint</a>{% endif %}</div>
+  <div class="filters">
+    <select id="f-status" aria-label="Filter by status"><option value="">All statuses</option>{% for key,label in statuses %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select>
+    <select id="f-category" aria-label="Filter by category"><option value="">All categories</option>{% for key,label in categories %}<option value="{{ key }}">{{ label }}</option>{% endfor %}</select>
+  </div>
+  <div class="scroll"><table id="issues"><thead><tr><th>ID</th><th>Issue</th><th>Category</th><th>Department</th><th>Reported by</th><th>Status</th><th>Reported</th></tr></thead><tbody></tbody></table></div>
+  <p id="empty" class="empty" hidden>No complaints match these filters.</p>
+</div>
+<h2>Complaint locations</h2>
+<div id="map" class="map" data-mode="public" data-scope="mine"></div>
+{% endblock %}

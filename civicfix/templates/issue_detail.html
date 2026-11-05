@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ issue.title }} | FixMyStreet{% endblock %}
+{% block back %}<a class="back" data-back href="{% url 'dashboard' %}">Back to dashboard</a>{% endblock %}
+{% block content %}
+<div class="grid2">
+  <section class="card" id="issue" data-id="{{ issue.id }}">
+    <p class="hint">COMPLAINT #{{ issue.id }}</p><h1>{{ issue.title }}</h1>
+    <p><span class="badge s-{{ issue.status }}" id="badge">{{ issue.get_status_display }}</span> <span class="live" id="live">Connecting</span></p>
+    <p class="hint">{{ issue.get_category_display }} · {{ issue.department }} · reported by {{ issue.reporter.username }} on {{ issue.created_at|date:"d M Y, H:i" }}</p>
+    <p>{{ issue.description|linebreaksbr }}</p>
+    {% if issue.address %}<p><b>Address:</b> {{ issue.address }}</p>{% endif %}
+    {% if issue.photo %}<img class="photo" src="{{ issue.photo.url }}" alt="Photo attached to complaint">{% endif %}
+    <div id="map" class="map" data-mode="single" data-lat="{{ issue.latitude }}" data-lng="{{ issue.longitude }}"></div>
+  </section>
+  <section>
+    <div class="card"><h2>Resolution timeline</h2><ol class="timeline" id="timeline">
+      {% for update in updates %}<li class="s-{{ update.status }}"><b>{{ update.get_status_display }}</b><br><span class="hint">{{ update.created_at|date:"d M Y, H:i" }} · {{ update.by.username|default:"system" }}</span>{% if update.note %}<br>{{ update.note }}{% endif %}</li>{% empty %}<li>No updates yet.</li>{% endfor %}
+    </ol></div>
+    {% if role != 'citizen' %}<div class="card"><h2>Update complaint</h2>
+      <form method="post">{% csrf_token %}
+        <p><label for="status">Status</label><select name="status" id="status">{% for key,label in statuses %}<option value="{{ key }}" {% if key == issue.status %}selected{% endif %}>{{ label }}</option>{% endfor %}</select></p>
+        {% if role == 'admin' %}<p><label for="department">Department</label><select name="department" id="department">{% for department in departments %}<option value="{{ department.id }}" {% if department == issue.department %}selected{% endif %}>{{ department.name }}</option>{% endfor %}</select></p>{% endif %}
+        <p><label for="note">Note for the citizen</label><input id="note" name="note" maxlength="300" placeholder="Add a progress note"></p>
+        <button class="btn">Save update</button>
+      </form>
+    </div>{% endif %}
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,9 @@
+{% extends "base.html" %}
+{% block title %}{{ title }} | FixMyStreet{% endblock %}
+{% block back %}<a class="back" data-back href="{% url 'login' %}">Back to login</a>{% endblock %}
+{% block content %}
+<section class="card narrow"><p class="hint">CITIZEN SERVICE PORTAL</p><h1>{{ title }}</h1>
+  <form method="post">{% csrf_token %}{{ form.as_p }}<button class="btn" type="submit">{{ cta }}</button></form>
+  {% if cta == "Sign up" %}<p>Already registered? <a href="{% url 'login' %}">Log in</a></p>{% endif %}
+</section>
+{% endblock %}
